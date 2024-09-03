@@ -1,19 +1,16 @@
 % Compute TBG density of states using KPM with Jackson smoothing. 
-% Local Chebyshev weights <v|T_n(H)|v> computed using get_cheb_wgts script.
+% Local Chebyshev weights <v|T_n(H)|v> computed using get_cheb_wgts_dos script.
 %
 % We load a 3-dim array cheb_wgts produced by that script. The first dimension
 % the Chebyshev polynomial degree, the second indexes shifts, and the third
 % indexes sheet/orbital combinations.
 
-% Input parameters (must be same as in dos_compute.m)
-filename = 'r100_N4_p1000.mat';
-p = 501;      % Chebyshev degree
-% N = 4;        % # shifts per dimension
-% E_range = 13; % Energy range covering entire spectrum
-dE = 0.01;    % Energy grid spacing
+% Input parameters
+filename = 'r100_N4_p1000_dos.mat';
+p = 501;        % Chebyshev degree
+dE = 0.01;      % Energy grid spacing
 
 load(['cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
-cheb_wgts = cheb_wgts(1:p,:,:); % Truncate Chebyshev weights
 
 E = (-E_range):dE:E_range; % Energy grid
 nE = length(E);
@@ -40,7 +37,7 @@ fprintf('%d / %d shift-loop\n',i,size(X(:),1))
         cheb_energy = Cheb_Eval(Esc, p-1);
         d = [.5 ones(1,p-1)];
         cheb_energy = diag(d)*cheb_energy;
-        ldos(:,i) = ldos(:,i) + (((jackson_coeff.*cheb_wgts(:,i,j).') * cheb_energy) .*measure_weight)';
+        ldos(:,i) = ldos(:,i) + (((jackson_coeff.*cheb_wgts(1:p,i,j).') * cheb_energy) .*measure_weight)';
         disp(['Time=',num2str(toc)])
     end
 end

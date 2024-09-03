@@ -5,24 +5,21 @@
 % the Chebyshev polynomial degree, the second indexes shifts, and the third
 % indexes sheet/orbital combinations.
 
-% Input parameters (must be same as in dos_compute.m)
-filename = 'r100_N4_p1000.mat';
+% Input parameters
+filename = 'r100_N4_p1000_dos.mat';
 p = 501;      % Chebyshev degree
-% N = 4;        % # shifts per dimension
-% E_range = 13; % Energy range covering entire spectrum
 m = 6;        % Order of method with respect to broadening parameter eta
 eta = 0.03;   % Broadening parameter
 dE = 0.01;    % Energy grid spacing
 
 load(['cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
-cheb_wgts = cheb_wgts(1:p,:,:); % Truncate Chebyshev weights
 
 E = (-E_range):dE:E_range; % Energy grid
 nE = length(E);
 
 % Compute local densities of states correspondning to shifts and sheet/orbital
 % combinations
-ldos = hodc_ldos(m, eta, p, E/E_range, reshape(cheb_wgts, p, N^2 * 4));
+ldos = hodc_ldos(m, eta, p, E/E_range, reshape(cheb_wgts(1:p,:,:), p, N^2 * 4));
 ldos = reshape(ldos, nE, N^2, 4);
 ldos = sum(ldos, 3); % Sum over sheet/orbital combinations
 

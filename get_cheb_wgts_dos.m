@@ -1,17 +1,15 @@
-% Compute LDOS Chebyshev weights <v|T_n(H)|v> for use in high-order delta
-% Chebyshev method
+% Compute Chebyshev weights <v|T_n(H)|v> for use in density of states
+% calculuation
 
-addpath("..");
-addpath("../chebyshev");
+addpath("chebyshev");
 
 p = 1000;           % # polynomials in Chebyshev expansion
 N = 4;              % # shifts per dimension
 E_range = 13;       % energy range
 r_cut = 100;        % Radial truncation
 theta = 6*pi/180;   % Rotation angle
-filename = 'r100_N4_p1000.mat';
+filename = 'r100_N4_p1000_dos.mat';
 
-E = (-E_range):.01:E_range; % needs to encompass entire spectrum
 [X,Y] = meshgrid(0:(N-1),0:(N-1));
 X = X/N-1/2;
 Y = Y/N-1/2;
@@ -55,4 +53,4 @@ cheb_wgts = reshape(cheb_wgts,[p,size(X(:),1),4]);
 
 disp(['Total time=',num2str(toc(tstart))])
 
-save(['data/',filename], 'p', 'N', 'E_range', 'r_cut', 'theta', 'cheb_wgts');
+save(['cheb_wgts_data/',filename], 'N', 'E_range', 'r_cut', 'theta', 'cheb_wgts');
