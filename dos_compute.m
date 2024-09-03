@@ -24,6 +24,7 @@ Y = Y(:);
 S = S(:);
 O = O(:);
 ldos = zeros(size(E,2),size(X(:),1));
+cheb_wgts = zeros(P+1,size(X(:),1),4);
 
 loc_s = graphene_init(theta,f,f,r_cut); % loc_s stores geometry, hopping function, system information.
 fprintf('begin loop\n')
@@ -39,9 +40,16 @@ fprintf('%d / %d shift-loop\n',i,size(X(:),1))
         end
 
         b = L*[X(i);Y(i)];
+        disp('Generating Hamiltonian for this shift...')
+        tic;
         H = loc_s.MatrixShift(b);
+        disp(['Time=',num2str(toc)])
 
-        ldos(:,i) = ldos(:,i) + Cheb_LDoS(H/E_range, v, P, E/(E_range+1))';
+        disp('Computing LDOS by KPM...')
+        tic;
+        [ldostmp,cheb_wgts(:,i,j)] = Cheb_LDoS(H, E_range, v, P, E/(E_range+1));
+        ldos(:,i) = ldos(:,i) + ldostmp';
+        disp(['Time=',num2str(toc)])
     end
 end
 
@@ -51,17 +59,22 @@ for i = 1:size(X(:),1)
 end
 dos = dos/(4*N^2); % normalize by discretization, # orbitals, # sheets
 
+%addpath ~/Documents/MATLAB/export_fig/
+
 %% display DoS
+figure(1);
 plot(E,dos);
 Range = 1; % Energy is displayed on [E_F-Range, E_F+Range]
 E_F = -.6; % rough position of Fermi energy
-axis([-Range+E_F,Range+E_F,0,max(dos(abs(E-E_F)<Range))])
+%axis([-Range+E_F,Range+E_F,0,max(dos(abs(E-E_F)<Range))])
+%export_fig('dos2.png');
 
 %% Display all LDoS on same plot
 
+figure(2);
 plot(E,ldos);
 Range = 1;
 E_F = -.6; % rough position of Fermi energy
 ldos_cut= ldos(abs(E-E_F)<Range,:);
-axis([-Range+E_F,Range+E_F,0, max(ldos_cut(:)) ])
-
+%axis([-Range+E_F,Range+E_F,0, max(ldos_cut(:)) ])
+%export_fig('ldos2.png');
