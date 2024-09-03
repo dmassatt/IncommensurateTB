@@ -8,8 +8,8 @@
 % Output will be an array LDoS, where LDoS is a function of energy
 % mathematically.
 
-function ldos = Cheb_LDoS(H, v, P, E)
-cheb_weights = Cheb_LDoS_Weights(H, v, P);
+function [ldos,cheb_weights] = Cheb_LDoS(H, E_range, v, P, E)
+cheb_weights = Cheb_LDoS_Weights(H, E_range, v, P);
 jackson_coeff = Cheb_JacksonCoeff(P);
 measure_weight = 1./sqrt(1 - E.^2);
 cheb_energy = Cheb_Eval(E, P);
