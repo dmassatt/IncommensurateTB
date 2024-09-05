@@ -1,7 +1,7 @@
 % This first block of code computes the DoS
 
 % assume existence of loc_s
-r_cut = 100; % radial truncation of system
+r_cut = 400; % radial truncation of system
 
 f = @(x) norm(x) < r_cut; % intralayer cut-off function
 theta = 6*pi/180;
@@ -28,7 +28,7 @@ cheb_wgts = zeros(P+1,size(X(:),1),4);
 
 loc_s = graphene_init(theta,f,f,r_cut); % loc_s stores geometry, hopping function, system information.
 fprintf('begin loop\n')
-for i = 1:size(X(:),1)
+for i = :size(X(:),1)
 fprintf('%d / %d shift-loop\n',i,size(X(:),1))
     for j =1:4
 

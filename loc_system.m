@@ -27,7 +27,7 @@ classdef loc_system
         % index(i,k) (i,1) = sheet index, (i,2) = sheet
         % index_inv(i,k) = matrix index (i = sheet index)
         % (k = sheet number)
-        H               % for zero-shift
+        %H               % for zero-shift
         I               % sparsity pattern (I,J)
         J
         R1              % R1,R2 are x,y coordinates of R-R' distance between sites
@@ -36,10 +36,11 @@ classdef loc_system
         O2
         S1              % S1,S2 are sheets interacting
         S2
-        Sign            % Sign = 1 for sheet 1, Sign = -1 for sheet 2
+        %Sign            % Sign = 1 for sheet 1, Sign = -1 for sheet 2
         f1              % f1,f2 are total cut-off functions for sheet 1 & 2
         f2
-        S               % sparsity value at [0,0]-shift
+        S               % INTRA layer entries only        
+                        % sparsity value at [0,0]-shift
         P               % a vector of size of the parallelograms of atoms,
                         % defined such that P(k) = 1 if kth index included.
         inter_end
@@ -113,16 +114,16 @@ classdef loc_system
                     index0 = index0+1;
                 end
             end
-            obj.I = zeros(count,1);
-            obj.J = zeros(count,1);
-            obj.S1 = zeros(count,1);
-            obj.S2 = zeros(count,1);
+            obj.I = zeros(count,1,'int8');
+            obj.J = zeros(count,1,'int8');
+            obj.S1 = zeros(count,1,'int8');
+            obj.S2 = zeros(count,1,'int8');
             obj.R1 = zeros(count,1);
             obj.R2 = zeros(count,1);
-            obj.O1 = zeros(count,1);
-            obj.O2 = zeros(count,1);
-            obj.Sign = zeros(count,1);
-            obj.S = zeros(count,1);
+            obj.O1 = zeros(count,1,'int8');
+            obj.O2 = zeros(count,1,'int8');
+            %obj.Sign = zeros(count,1);
+            %obj.S = zeros(count,1);
             count2 = 1;
             
             %% Calculate Matrix
@@ -146,9 +147,9 @@ classdef loc_system
                         obj.O2(X) = s1.index_inv(neighbors,3);
                         obj.S1(X) = 2;
                         obj.S2(X) = 1;
-                        obj.Sign(X) = -1;
+                        %obj.Sign(X) = -1;
                         
-                        obj.S(X) = obj.inter_func(r(1,:),r(2,:),s2.index_inv(i,3)*OneX,s1.index_inv(neighbors,3)',2*OneX,OneX);
+                        %obj.S(X) = obj.inter_func(r(1,:),r(2,:),s2.index_inv(i,3)*OneX,s1.index_inv(neighbors,3)',2*OneX,OneX);
                         
                         count2 = count2+s;
                     %end
@@ -172,9 +173,9 @@ classdef loc_system
                         obj.O2(X) = s2.index_inv(neighbors,3);
                         obj.S1(X) = OneX;
                         obj.S2(X) = 2*OneX;
-                        obj.Sign(X) = OneX;
+                        %obj.Sign(X) = OneX;
                         
-                        obj.S(X) = obj.inter_func(r(1,:),r(2,:),s1.index_inv(i,3)*OneX,s2.index_inv(neighbors,3)',OneX,2*OneX);
+                        %obj.S(X) = obj.inter_func(r(1,:),r(2,:),s1.index_inv(i,3)*OneX,s2.index_inv(neighbors,3)',OneX,2*OneX);
                         
                         count2 = count2+s;
                     %end
@@ -183,6 +184,8 @@ classdef loc_system
  
             obj.inter_end = count2-1;
             % Calculate Self Interaction
+
+            obj.S = zeros(size(obj.I,1)-obj.inter_end,1);
             
             for i = 1:s1_size
                 if obj.P(i,1) == 1
@@ -199,7 +202,7 @@ classdef loc_system
                             obj.R2(X) = r(2,:);
                             obj.O1(X) = s1.index_inv(i,3)*OneX;
                             obj.O2(X) = s1.index_inv(neighbors,3);
-                            obj.S(X) = obj.intra_func1(r(1,:),r(2,:),s1.index_inv(i,3)*OneX,s1.index_inv(neighbors,3)');
+                            obj.S(X-obj.inter_end) = obj.intra_func1(r(1,:),r(2,:),s1.index_inv(i,3)*OneX,s1.index_inv(neighbors,3)');
                             count2 = count2+s;
                         %end
                     %end
@@ -222,7 +225,7 @@ classdef loc_system
                             obj.R2(X) = r(2,:);
                             obj.O1(X) = s2.index_inv(i,3)*OneX;
                             obj.O2(X) = s2.index_inv(neighbors,3);
-                            obj.S(X) = obj.intra_func2(r(1,:),r(2,:),s2.index_inv(i,3)*OneX,s2.index_inv(neighbors,3)');
+                            obj.S(X-obj.inter_end) = obj.intra_func2(r(1,:),r(2,:),s2.index_inv(i,3)*OneX,s2.index_inv(neighbors,3)');
                             
                             count2 = count2+s;
                         %end
@@ -231,7 +234,7 @@ classdef loc_system
             end
 
             %[max(obj.I(:)), min(obj.I(:)) max(obj.J(:)), min(obj.J(:))]
-            obj.H = sparse(obj.I,obj.J,obj.S,mat_size,mat_size);
+            %obj.H = sparse(obj.I,obj.J,obj.S,mat_size,mat_size);
 
         end
 
@@ -258,11 +261,12 @@ classdef loc_system
         
         function H_mat = MatrixShift(obj,shift)
             
-            Shifts = shift*obj.Sign';
+            Shifts = shift*double(obj.S2-obj.S1)';
             r = [obj.R1';obj.R2']+Shifts;
-            Sn = zeros(size(obj.Sign));
-            Sn(1:obj.inter_end) = obj.inter_func(r(1,1:obj.inter_end)',r(2,1:obj.inter_end)',obj.O1(1:obj.inter_end),obj.O2(1:obj.inter_end),obj.S1(1:obj.inter_end),obj.S2(1:obj.inter_end));
-            Sn((obj.inter_end+1):size(Sn,1)) = obj.S((obj.inter_end+1):size(Sn,1));
+            Sn = zeros(size(obj.I));
+            Sn(1:obj.inter_end) =   obj.inter_func(r(1,1:obj.inter_end)',r(2,1:obj.inter_end)',obj.O1(1:obj.inter_end),...
+                                    obj.O2(1:obj.inter_end),obj.S1(1:obj.inter_end),obj.S2(1:obj.inter_end));
+            Sn((obj.inter_end+1):size(Sn,1)) = obj.S;%((obj.inter_end+1):size(Sn,1));
             H_mat = sparse(obj.I,obj.J,Sn,obj.mat_size,obj.mat_size);
    
         end
@@ -283,7 +287,7 @@ classdef loc_system
         end
 
         function v = center_vector(obj,s_n,k)
-            v = zeros(size(obj.H,1),1);
+            v = zeros(obj.mat_size,1);
             v(obj.center_index(s_n,k))= 1;
         end
         
@@ -328,8 +332,8 @@ classdef loc_system
         
         function t = inter_func(obj,x,y,orbit1_i,orbit2_i,s1,s2) % o and m are orbitals
             
-            orbit1 = (s1==1).*orbit1_i+(s1==2).*orbit2_i;
-            orbit2 = (s2==1).*orbit2_i+(s2==2).*orbit1_i;
+            orbit1 = (s1==1).*double(orbit1_i)+(s1==2).*double(orbit2_i);
+            orbit2 = (s2==1).*double(orbit2_i)+(s2==2).*double(orbit1_i);
             
             x = (s1==1).*x -(s1==2).*x;
             y = (s1==1).*y -(s1==2).*y;
