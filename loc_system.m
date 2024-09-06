@@ -114,14 +114,14 @@ classdef loc_system
                     index0 = index0+1;
                 end
             end
-            obj.I = zeros(count,1,'int8');
-            obj.J = zeros(count,1,'int8');
-            obj.S1 = zeros(count,1,'int8');
-            obj.S2 = zeros(count,1,'int8');
+            obj.I = zeros(count,1);%'int8');
+            obj.J = zeros(count,1);%'int8');
+            obj.S1 = zeros(count,1);%,'int8');
+            obj.S2 = zeros(count,1);%,'int8');
             obj.R1 = zeros(count,1);
             obj.R2 = zeros(count,1);
-            obj.O1 = zeros(count,1,'int8');
-            obj.O2 = zeros(count,1,'int8');
+            obj.O1 = zeros(count,1);%,'int8');
+            obj.O2 = zeros(count,1);%,'int8');
             %obj.Sign = zeros(count,1);
             %obj.S = zeros(count,1);
             count2 = 1;
@@ -332,8 +332,10 @@ classdef loc_system
         
         function t = inter_func(obj,x,y,orbit1_i,orbit2_i,s1,s2) % o and m are orbitals
             
-            orbit1 = (s1==1).*double(orbit1_i)+(s1==2).*double(orbit2_i);
-            orbit2 = (s2==1).*double(orbit2_i)+(s2==2).*double(orbit1_i);
+            orbit1 = (s1==1).*(orbit1_i)+(s1==2).*(orbit2_i);
+            orbit2 = (s2==1).*(orbit2_i)+(s2==2).*(orbit1_i);
+            orbit1 = (orbit1);
+            orbit2 = (orbit2);
             
             x = (s1==1).*x -(s1==2).*x;
             y = (s1==1).*y -(s1==2).*y;
