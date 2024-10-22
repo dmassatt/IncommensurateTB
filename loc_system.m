@@ -45,7 +45,6 @@ classdef loc_system
                         % defined such that P(k) = 1 if kth index included.
         inter_end
         
-        
         theta
         
         mat_size
@@ -72,7 +71,6 @@ classdef loc_system
             
             s1_size = size(s1.Atom_Positions,2);
             
-            
             s2_size = size(s2.Atom_Positions,2);
             
             count = 0;
@@ -85,17 +83,16 @@ classdef loc_system
             %% Counting
             for i = 1:s1_size
                 if obj.P(i,1) == 1
-                    count = count + size(s1.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.intra1_cut+obj.intra1_buffer,obj.P(1:s1_size)),1);
-                    count = count + size(s2.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.inter_cut+obj.inter_buffer,obj.P((s1_size+1):(s2_size+s1_size))),1);
+                    count = count + size(s1.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.intra1_cut+obj.intra1_buffer),1);
+                    count = count + size(s2.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.inter_cut+obj.inter_buffer),1);
                 end
             end
             for i = 1:s2_size
                 if obj.P(i+s1_size,1) == 1
-                    count = count + size(s1.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.inter_cut+obj.inter_buffer,obj.P(1:s1_size)),1);
-                    count = count + size(s2.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.intra2_cut+obj.intra2_buffer,obj.P((s1_size+1):(s2_size+s1_size))),1);
+                    count = count + size(s1.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.inter_cut+obj.inter_buffer),1);
+                    count = count + size(s2.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.intra2_cut+obj.intra2_buffer),1);
                 end
             end
-
             %% Indexing
             obj.index = zeros(mat_size,2);
             obj.index_inv = zeros(max([s1_size,s2_size]),2);
@@ -132,7 +129,7 @@ classdef loc_system
             for i = 1:s2_size
                 
                 if obj.P(i+s1_size,1) == 1
-                    neighbors = s1.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.inter_cut+obj.inter_buffer,obj.P(1:s1_size));
+                    neighbors = s1.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.inter_cut+obj.inter_buffer);
                     s = size(neighbors,1);
                     X = count2:(count2+s-1);
                     OneX = ones(size(X));
@@ -159,7 +156,8 @@ classdef loc_system
             for i = 1:s1_size
                
                 if obj.P(i,1) == 1
-                    neighbors = s2.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.inter_cut+obj.inter_buffer,obj.P((s1_size+1):(s2_size+s1_size)));
+                    neighbors = s2.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.inter_cut+obj.inter_buffer);
+
                     s = size(neighbors,1);
                     X = count2:(count2+s-1);
                     OneX = ones(size(X));
@@ -189,7 +187,7 @@ classdef loc_system
             
             for i = 1:s1_size
                 if obj.P(i,1) == 1
-                    neighbors = s1.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.intra1_cut+obj.intra1_buffer,obj.P(1:s1_size));
+                    neighbors = s1.neighbors(s1.Atom_Positions(:,i)-s1.Origin,obj.intra1_cut+obj.intra1_buffer);
                     s = size(neighbors,1);
                     X = count2:(count2+s-1);
                     OneX = ones(size(X));
@@ -212,7 +210,7 @@ classdef loc_system
 
             for i = 1:s2_size
                 if obj.P(i+s1_size,1) == 1
-                    neighbors = s2.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.intra2_cut+obj.intra2_buffer,obj.P((s1_size+1):(s2_size+s1_size)));
+                    neighbors = s2.neighbors(s2.Atom_Positions(:,i)-s2.Origin,obj.intra2_cut+obj.intra2_buffer);
                     s = size(neighbors,1);
                     X = count2:(count2+s-1);
                     OneX = ones(size(X));

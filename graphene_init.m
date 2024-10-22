@@ -16,8 +16,8 @@ if mod(N,2)==0
     N = N+1;
 end
 Size = [M,N];
-s1 = sheet(L,Size,basis);
-s2 = sheet(R*L,Size,R*basis);
+s1 = sheet(L,Size,basis,r_cut,[0;0]);
+s2 = sheet(R*L,Size,R*basis,r_cut,[0;0]);
 intra_c = 4.33;
 inter_c = 6 + norm(L*[1;1]);
 

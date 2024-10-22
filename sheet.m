@@ -11,14 +11,15 @@ classdef sheet
         index_inv            % opposite of above
         Ratio                % used in neighbor calculations
         Origin_Index
+        r_cut                % circular cut-out of sheet used for neighbors function
         
     end
     methods
-        function obj = sheet(L,Sheet_Size,basis_positions,shift) % constructor
+        function obj = sheet(L,Sheet_Size,basis_positions,r_cut,shift) % constructor
             if ~exist('shift','var')
                 shift = [0;0];
             end
-            
+            obj.r_cut = r_cut;
             obj.Lattice = L;
             obj.Sheet_Size = Sheet_Size;
             obj.Basis_Positions = basis_positions;
@@ -56,17 +57,17 @@ classdef sheet
 
         end
 
-        function Neighbors = neighbors(obj,Position, Cutoff,P)
-            noP = 0; % we assume there is a P
-            if ~exist('P','var')
-                noP = 1;
-                P = ones(size(obj.Atom_Positions,2),1);
-            end
+        function Neighbors = neighbors(obj,Position, Cutoff)
+            % noP = 0; % we assume there is a P
+            % if ~exist('P','var')
+            %     noP = 1;
+            %     P = ones(size(obj.Atom_Positions,2),1);
+            % end
             
             Cutoff_Adj = Cutoff*obj.Ratio;
             Cutoff_Squared = Cutoff^2;
             Position_Adj = Position + obj.Origin;
-            coord = floor(obj.Lattice^(-1)*(Position_Adj));
+            coord = floor(obj.Lattice^(-1)*Position_Adj);
             
             if coord(1,1) <= 0
                 coord(1,1) = 1;
@@ -102,7 +103,9 @@ classdef sheet
             Position_Squared = (obj.Atom_Positions(1,l)-Position_Adj(1,1)).^2 ...
             + (obj.Atom_Positions(2,l)-Position_Adj(2,1)).^2;
 
-            Neighbors = l(Position_Squared(:) < Cutoff_Squared & P(l)==1);
+            X = obj.Atom_Positions(:,l)-obj.Origin(:)*ones(1,size(l,1));
+
+            Neighbors = l(Position_Squared(:) < Cutoff_Squared & (X(1,:).^2 + X(2,:).^2 < obj.r_cut^2)');
 
             % if Position_Squared(l,1)<Cutoff_Squared
             %     if noP == 0
