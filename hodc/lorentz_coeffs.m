@@ -3,7 +3,7 @@
 % f(x) = -1/pi * (nu - x + i*eta)^-1
 %
 % on [a,b]
-function [coefs] = lorentz_coeffs(p, nu, eta, a, b)
+function [coefs] = lorentz_coeffs_vec(p, nu, eta, a, b)
 
   pp = 4*p; % Oversampling factor
 
@@ -16,8 +16,8 @@ function [coefs] = lorentz_coeffs(p, nu, eta, a, b)
 
   % Compute the Chebyshev coefficients
   coefs = sqrt(2/pp)*dct(f,'Type',2);
-  coefs(1) = coefs(1)/sqrt(2);
+  coefs(1,:) = coefs(1,:)/sqrt(2);
 
-  coefs = coefs(1:p);
+  coefs = coefs(1:p,:);
 
 end
