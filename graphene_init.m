@@ -22,7 +22,7 @@ intra_c = 4.33;
 inter_c = 6 + norm(L*[1;1]);
 
 intra = @(x,y,o,m) intra_graphene(x,y,o,m);
-inter = @(x,y,o,m,a,b) inter_graphene(x,y,o,m,a,b,theta);
+%inter = @(x,y,o,m,a,b) inter_graphene(x,y,o,m,a,b,theta);
 %s1.view('b');
 % hold on
 % s2.view('g');
