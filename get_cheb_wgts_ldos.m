@@ -9,25 +9,17 @@ r_cut = 100;        % Radial truncation
 theta = 6*pi/180;   % Rotation angle
 filename = 'r100_p1000_ldos.mat';
 
-X = -1/2;
-Y = -1/2;
-
-f = @(x) norm(x) < r_cut; % intralayer cut-off function
-
-S = 1;
-O = 1;
+S = 1; % sheet number for LDoS
+O = 1; % orbital index for LDoS
 
 tstart = tic;
 
-loc_s = graphene_init(theta,f,f,r_cut); % loc_s stores geometry, hopping function, system information.
-v = loc_s.center_vector(S,O);
-L = loc_s.sheet1.Lattice;
-
-b = L*[X;Y];
 disp('Generating Hamiltonian...')
 tic;
-%H = loc_s.MatrixShift(b);
-H = GenerateH(theta,r_cut);
+
+[H,sheet_orbital] = GenerateH(theta,r_cut);
+v = zeros(size(H,1),1);
+v(sheet_orbital(S,O)) = 1;
 disp(['Time=',num2str(toc)])
 
 disp('Generating Chebyshev weights...')

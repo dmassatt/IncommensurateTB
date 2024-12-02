@@ -1,4 +1,4 @@
-function H = GenerateH(theta,r_cut)
+function [H,v] = GenerateH(theta,r_cut)
 %(s1,s2,intra1,intra2,theta,intra_c1,intra_c2,inter_c,f1,f2)
 
 f = @(x) norm(x) < r_cut;
@@ -27,12 +27,9 @@ inter_cut = 6 + norm(L*[1;1]);
 
 intra = @(x,y,o,m) intra_graphene(x,y,o,m);
 
-
-
 intra1_buffer = max([norm(s1.Lattice(:,1)),norm(s1.Lattice(:,2)),norm(s1.Lattice(:,1)+s1.Lattice(:,2))]);
 intra2_buffer = max([norm(s2.Lattice(:,1)),norm(s2.Lattice(:,2)),norm(s2.Lattice(:,1)+s2.Lattice(:,2))]);
 inter_buffer  = max([intra1_buffer,intra2_buffer]);
-
 
 s1_size = size(s1.Atom_Positions,2);
 
@@ -159,5 +156,12 @@ for i = 1:s2_size
 end
 
 H = sparse(I,J,S,mat_size,mat_size);
+
+v = zeros(2,2);
+for s_n = 1:2
+    for k = 1:2
+        v(s_n,k) = index_inv(s1.Origin_Index(k,1),s_n);
+    end
+end
 
 end
