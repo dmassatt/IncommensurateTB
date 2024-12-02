@@ -26,7 +26,8 @@ L = loc_s.sheet1.Lattice;
 b = L*[X;Y];
 disp('Generating Hamiltonian...')
 tic;
-H = loc_s.MatrixShift(b);
+%H = loc_s.MatrixShift(b);
+H = GenerateH(theta,r_cut);
 disp(['Time=',num2str(toc)])
 
 disp('Generating Chebyshev weights...')
