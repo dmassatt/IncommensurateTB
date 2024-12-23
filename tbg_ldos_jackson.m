@@ -3,16 +3,13 @@
 % We load a vector cheb_wgts of weights produced by that script.
 
 % Input parameters
-filename = 'r100_p1000_ldos.mat';
-p = 200;       % Chebyshev degree
-dE = 0.01;      % Energy grid spacing
+filename = 'r800_p4000_ldos.mat';
+p = 4000;       % Chebyshev degree
+dE = 0.005;      % Energy grid spacing
 
 load(['cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
 
 E = (-E_range):dE:E_range; % Energy grid
-
-S = 1;
-O = 1;
 
 disp('Computing LDOS by Jackson KPM...')
 tic;
@@ -29,4 +26,5 @@ disp(['Time=',num2str(toc)])
 
 figure(1);
 plot(E, ldos, '.-');
+xlim([-2 1])
 %export_fig('ldos_jackson_1000.pdf');
