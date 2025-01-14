@@ -3,7 +3,7 @@
 % f(x) = -1/pi * (nu - x + i*eta)^-1
 %
 % on [a,b]
-function [coefs] = lorentz_coeffs_vec(p, nu, eta, a, b)
+function [coefs] = lorentz_coeffs(p, nu, eta, a, b)
 
   pp = 4*p; % Oversampling factor
 
