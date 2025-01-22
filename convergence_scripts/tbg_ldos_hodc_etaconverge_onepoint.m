@@ -31,6 +31,7 @@ end
 % Compute self-convergence error
 err = abs(ldos_val(2:end,:) - ldos_val(1:end-1,:));
 figure(2);
+set(gcf,'position',[100,100,1000,800])
 loglog(etas(1:end-1),err,'.-','linewidth',1.5,'markersize',20); hold on
 loglog(etas(2:5),1e10*etas(2:5).^m,'--k'); hold off
 xlabel('$\eta$','interpreter','latex')

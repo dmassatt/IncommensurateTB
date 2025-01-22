@@ -24,14 +24,12 @@ function ldos = hodc_ldos(m, eta, p, oms, cheb_wgts)
   if (m > 6)
     warning('Poles & residues may not be accurate for m > 6.');
   end
-  [delta_pol,delta_wgt]=rational_kernel(m,'equi')
+  [delta_pol,delta_wgt]=rational_kernel(m,'equi');
   delta_polx = real(delta_pol);
 
   % Get weighted Lorentzian Chebyshev coefficients for all frequencies
-  disp('Obtaining Lorentzian coefficients...');
   nom = length(oms);
 %   coefs = zeros(p, nom, m);
-  tic;
 
   nus = zeros(nom*m,1);
   for l = 1:m
@@ -45,16 +43,12 @@ function ldos = hodc_ldos(m, eta, p, oms, cheb_wgts)
       coefs(:,:,l) = delta_wgt(l)*coefs(:,:,l);
   end
 
-  disp(['Time=',num2str(toc)]);
-
   % Compute the local densities of states
-  disp('Computing local densities of states using HODC method...');
   tic;
   nldos = size(cheb_wgts, 2);
   ldos = zeros(nom, nldos);
   for l=1:m
     ldos = ldos + imag(coefs(:, :, l).' * cheb_wgts);
   end
-  disp(['Time=',num2str(toc)]);
 
 end
