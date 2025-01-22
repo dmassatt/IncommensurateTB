@@ -1,7 +1,7 @@
 % Compute Chebyshev weights <v|T_n(H)|v> for use in local density of states
 % calculuation
 
-addpath("chebyshev");
+addpath("kpm");
 maxNumCompThreads(1);
 
 p = 16000;          % # polynomials in Chebyshev expansion
