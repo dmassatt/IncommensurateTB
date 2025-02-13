@@ -11,9 +11,9 @@ dE = 0.005;    % Energy grid spacing
 
 etas = 0.02./1.5.^(0:5);   % Broadening parameters
 
-addpath('hodc','hodc/kernels');
+addpath('../hodc','../hodc/kernels');
 
-load(['cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
+load(['../cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
 
 E = (-E_range):dE:E_range; % Energy grid
 
