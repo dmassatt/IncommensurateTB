@@ -3,6 +3,7 @@
 %
 % We load a 3-dim array cheb_wgts produced by that script. The first dimension
 % the Chebyshev polynomial degree, the second orbital index.
+% as the Hamiltonian is periodic, a single site is used to compute dos
 
 % Input parameters
 filename = 'r100_N4_p1000_dos.mat';
@@ -21,26 +22,23 @@ nE = length(E);
 
 
 
-ldos = zeros(size(E,2),2);
-j=1;
+dos = zeros(size(E,2),1);
+j=1; % index
 
-   % for j =1:2
-        disp('Computing LDOS by Jackson KPM...')
-        tic;
-            Esc = E/(E_range+1);
-        v = zeros(2*N^2,1);
-        v(1+(j-1)*N^2) = 1;
-        H = Generate_MonG(L,1); 
-        cheb_wgts=Cheb_LDoS_Weights(H, E_range, v, p-1);
-        jackson_coeff = Cheb_JacksonCoeff(p-1);
-        measure_weight = 1./sqrt(1 - Esc.^2);
-        cheb_energy = Cheb_Eval(Esc, p-1);
-        d = [.5 ones(1,p-1)];
-        cheb_energy = diag(d)*cheb_energy;
-        ldos(:,j) = ldos(:,j) + (((jackson_coeff.*cheb_wgts) * cheb_energy) .*measure_weight)';
-        disp(['Time=',num2str(toc)])
-  %  end
-dos = ldos(:,1)+ldos(:,2);
+disp('Computing LDOS by Jackson KPM...')
+tic;
+    Esc = E/(E_range+1);
+v = zeros(2*N^2,1);
+v(1+(j-1)*N^2) = 1;
+H = Generate_MonG(L,1); 
+cheb_wgts=Cheb_LDoS_Weights(H, E_range, v, p-1);
+jackson_coeff = Cheb_JacksonCoeff(p-1);
+measure_weight = 1./sqrt(1 - Esc.^2);
+cheb_energy = Cheb_Eval(Esc, p-1);
+d = [.5 ones(1,p-1)];
+cheb_energy = diag(d)*cheb_energy;
+dos(:,j) = dos(:,j) + (((jackson_coeff.*cheb_wgts) * cheb_energy) .*measure_weight)';
+disp(['Time=',num2str(toc)])
 
 
 %addpath ~/Documents/MATLAB/export_fig/
