@@ -8,14 +8,15 @@
 % Input parameters
 filename = 'r100_N4_p1000_dos.mat';
 p = 501;        % Chebyshev degree
-dE = 0.01;      % Energy grid spacing
+dE = 0.002;      % Energy grid spacing
 
-L=100;
+L=200;
 N = 2*L+1;
 
 addpath('Tight_Binding')
 
-E_range = 4;
+E_range = 4; % currently targets a range encorporating all monolayer dos energies
+E_scale = 4.5; % Rescale of energy for Chebyshev
 
 E = (-E_range):dE:E_range; % Energy grid
 nE = length(E);
@@ -27,11 +28,11 @@ j=1; % index
 
 disp('Computing LDOS by Jackson KPM...')
 tic;
-    Esc = E/(E_range+1);
+Esc = E/E_scale;
 v = zeros(2*N^2,1);
-v(1+(j-1)*N^2) = 1;
+v(1) = 1;
 H = Generate_MonG(L,1); 
-cheb_wgts=Cheb_LDoS_Weights(H, E_range, v, p-1);
+cheb_wgts=Cheb_LDoS_Weights(H, E_scale, v, p-1);
 jackson_coeff = Cheb_JacksonCoeff(p-1);
 measure_weight = 1./sqrt(1 - Esc.^2);
 cheb_energy = Cheb_Eval(Esc, p-1);
@@ -39,10 +40,12 @@ d = [.5 ones(1,p-1)];
 cheb_energy = diag(d)*cheb_energy;
 dos(:,j) = dos(:,j) + (((jackson_coeff.*cheb_wgts) * cheb_energy) .*measure_weight)';
 disp(['Time=',num2str(toc)])
-
+dos = 2*dos /(E_scale*pi);
 
 %addpath ~/Documents/MATLAB/export_fig/
 
 figure(1);
 plot(E, dos, '.-');
 %export_fig('dos_jackson_1000.pdf');
+
+mass = sum(dos)*dE
