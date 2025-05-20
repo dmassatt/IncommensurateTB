@@ -17,7 +17,7 @@ for i=1:length(ps)
   % Evaluate Chebyshev expansion
   xsc = 2*(x - a)/(b - a) - 1; % Evaluation points on [-1,1]
   ftest = cos(acos(xsc)*(0:p-1)) * coefs;
-  ftrue = -1/pi * 1./(nu - x + 1i*eta);
+  ftrue = -1/pi * imag(1./(x - nu + 1i*eta));
 
   % Check the error
   err(i) = max(abs(ftest - ftrue));

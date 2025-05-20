@@ -16,13 +16,15 @@
 %
 % ldos: Local density of states; the rows index the frequencies oms, and the
 % columns index the different local densities of states
-function ldos = kpm_ldos(p, oms, cheb_wgts)
+function ldos = kpm_ldos(p, oms, E_range, cheb_wgts)
 
+  omssc = oms/E_range; % Scale the frequencies to [-1,1]
   jackson_coeff = Cheb_JacksonCoeff(p-1);
-  measure_weight = 1./sqrt(1 - oms.^2);
-  cheb_energy = Cheb_Eval(oms, p-1);
+  measure_weight = 1./sqrt(1 - omssc.^2);
+  cheb_energy = Cheb_Eval(omssc, p-1);
   d = [.5 ones(1,p-1)];
   cheb_energy = diag(d)*cheb_energy;
   ldos = (((jackson_coeff.*cheb_wgts.') * cheb_energy) .*measure_weight)';
+  ldos = 2*ldos / (E_range*pi);
 
 end
