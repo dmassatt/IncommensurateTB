@@ -4,9 +4,9 @@ eta = 0.1;
 a = -1;
 b = 2;
 
-rng(1783); % Fix random seed
+%rng(1783); % Fix random seed
 x = a + (b-a)*rand(100,1);
-nu = 0;
+nu = 0.3;
 
 ps = 20:20:600;
 err = zeros(size(ps));
@@ -17,7 +17,7 @@ for i=1:length(ps)
   % Evaluate Chebyshev expansion
   xsc = 2*(x - a)/(b - a) - 1; % Evaluation points on [-1,1]
   ftest = cos(acos(xsc)*(0:p-1)) * coefs;
-  ftrue = -1/pi * imag(1./(x - nu + 1i*eta));
+  ftrue = -1/pi * 1./(x - nu + 1i*eta);
 
   % Check the error
   err(i) = max(abs(ftest - ftrue));

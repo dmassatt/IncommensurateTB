@@ -18,7 +18,6 @@
 %
 % ldos: Local density of states; the rows index the frequencies oms, and the
 % columns index the different local densities of states
-% function ldos = hodc_ldos(m, eta, p, oms, cheb_wgts)
 function ldos = hodc_ldos(m, eta, p, oms, E_range, cheb_wgts)
 
   % Get poles and weights for high-order expansion of delta function
@@ -38,7 +37,6 @@ function ldos = hodc_ldos(m, eta, p, oms, E_range, cheb_wgts)
       end
   end
 
-  % coefs = reshape(lorentz_coeffs(p,nus.',eta,-1,1),p,nom,m);
   coefs = reshape(lorentz_coeffs(p,nus.',eta,-E_range,E_range),p,nom,m);
   for l=1:m
       coefs(:,:,l) = delta_wgt(l)*coefs(:,:,l);
@@ -49,8 +47,7 @@ function ldos = hodc_ldos(m, eta, p, oms, E_range, cheb_wgts)
   nldos = size(cheb_wgts, 2);
   ldos = zeros(nom, nldos);
   for l=1:m
-    ldos = ldos + coefs(:, :, l).' * cheb_wgts;
+    ldos = ldos + imag(coefs(:, :, l).' * cheb_wgts);
   end
-  ldos = real(ldos);
 
 end
