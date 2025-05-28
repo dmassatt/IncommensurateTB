@@ -1,5 +1,5 @@
 % Compute Chebyshev weights <v|T_n(H)|v> for use in local density of states
-% calculuation
+% calculation
 
 addpath("kpm");
 maxNumCompThreads(1);

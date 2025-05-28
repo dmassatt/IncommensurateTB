@@ -1,5 +1,5 @@
-% Compute TBG local density of states using KPM with Jackson smoothing, for
-% decreasing values of eta, and plot self-convergence error at a single energy point.
+% Compute TBG local density of states using high-order delta-Chebyshev method, for
+% decreasing values of eta.
 % Local Chebyshev weights <v|T_n(H)|v> computed using get_cheb_wgts_ldos script.
 % We load a vector cheb_wgts of weights produced by that script.
 
@@ -10,7 +10,7 @@ pdata = 16000;  % Chebyshev degree computed in data file
 
 rate = 10^(1/m);
 rs = [100 200 400 800 1600 3200];
-etas = 0.02./rate.^(0:10);   % Broadening parameters
+etas = 0.2./rate.^(0:10);   % Broadening parameters
 E = -0.43; % Pick specific energy to measure
 
 addpath('../hodc','../hodc/kernels');
@@ -24,7 +24,8 @@ for j=1:length(rs)
     % Compute local densities of states
     for i=1:length(etas)
         eta = etas(i);
-        ldos_val(i,j) = hodc_ldos(m, eta, p, E/E_range, cheb_wgts(1:p));
+        % ldos_val(i,j) = hodc_ldos(m, eta, p, E/E_range, cheb_wgts(1:p));
+        ldos_val(i,j) = hodc_ldos(m, eta, p, E, E_range, cheb_wgts(1:p));
     end
 end
 
@@ -33,7 +34,7 @@ err = abs(ldos_val(2:end,:) - ldos_val(1:end-1,:));
 figure(2);
 set(gcf,'position',[100,100,1000,800])
 loglog(etas(1:end-1),err,'.-','linewidth',1.5,'markersize',20); hold on
-loglog(etas(2:5),1e10*etas(2:5).^m,'--k'); hold off
+loglog(etas(2:5),etas(2:5).^m,'--k'); hold off
 xlabel('$\eta$','interpreter','latex')
 ylabel('Self-convergence error')
 set(gca,'fontsize',15)

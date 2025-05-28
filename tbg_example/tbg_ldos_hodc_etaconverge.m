@@ -1,5 +1,5 @@
-% Compute and plot TBG local density of states using KPM with Jackson smoothing, for
-% decreasing values of eta.
+% Compute TBG local density of states using high-order delta-Chebyshev method, for
+% decreasing values of eta, and plot self-convergence error.
 % Local Chebyshev weights <v|T_n(H)|v> computed using get_cheb_wgts_ldos script.
 % We load a vector cheb_wgts of weights produced by that script.
 
