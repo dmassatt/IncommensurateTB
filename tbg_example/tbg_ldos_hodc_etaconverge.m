@@ -1,34 +1,48 @@
 % Compute TBG local density of states using high-order delta-Chebyshev method, for
-% decreasing values of eta, and plot self-convergence error.
+% decreasing values of eta.
 % Local Chebyshev weights <v|T_n(H)|v> computed using get_cheb_wgts_ldos script.
 % We load a vector cheb_wgts of weights produced by that script.
 
 % Input parameters
-filename = 'r800_p16000_ldos.mat';
-p = 8000;     % Chebyshev degree
-m = 6;        % Order of method with respect to broadening parameter eta
-dE = 0.005;    % Energy grid spacing
+p = 16000;       % Chebyshev degree
+m = 6;          % Order of method with respect to broadening parameter eta
+pdata = 16000;  % Chebyshev degree computed in data file
 
-etas = 0.02./1.5.^(0:5);   % Broadening parameters
+rate = 10^(1/m);
+rs = [100 200 400 800 1600 3200];
+etas = 0.2./rate.^(0:10);   % Broadening parameters
+E = -0.43; % Pick specific energy to measure
 
 addpath('../hodc','../hodc/kernels');
 
-load(['../cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
+ldos_val = zeros(length(etas),length(rs));
+for j=1:length(rs)
+    r = rs(j);
+    filename = ['r',num2str(r),'_p',num2str(pdata),'_ldos.mat'];
+    load(['../cheb_wgts_data/',filename]); % Load parameters and Chebyshev weights from file
 
-E = (-E_range):dE:E_range; % Energy grid
-
-figure(3);
-% Compute local densities of states
-for i=1:length(etas)
-    eta = etas(i);
-    ldos = hodc_ldos(m, eta, p, E/E_range, cheb_wgts(1:p));
-
-    plot(E, ldos, '.-'); hold on
-    xlim([-2, 1])
+    % Compute local densities of states
+    for i=1:length(etas)
+        eta = etas(i);
+        % ldos_val(i,j) = hodc_ldos(m, eta, p, E/E_range, cheb_wgts(1:p));
+        ldos_val(i,j) = hodc_ldos(m, eta, p, E, E_range, cheb_wgts(1:p));
+    end
 end
-hold off
 
-legend(string(num2cell(etas)));
-xlabel('E')
-ylabel('LDOS(E)')
-set(gca,'fontsize',20)
+% Compute self-convergence error
+err = abs(ldos_val(2:end,:) - ldos_val(1:end-1,:));
+figure(2);
+set(gcf,'position',[100,100,1000,800])
+loglog(etas(1:end-1),err,'.-','linewidth',1.5,'markersize',20); hold on
+loglog(etas(2:5),etas(2:5).^m,'--k'); hold off
+xlabel('$\eta$','interpreter','latex')
+ylabel('Self-convergence error')
+set(gca,'fontsize',15)
+
+% Legend with text 'r = {rs(1),...,rs(end)}'
+legend_str = cell(1,length(rs));
+for j=1:length(rs)
+    legend_str{j} = ['r = ',num2str(rs(j))];
+end
+legend(legend_str,'location','northwest')
+set(gca,'fontsize',15)
