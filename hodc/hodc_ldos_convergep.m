@@ -10,6 +10,7 @@
 % m:    Order of method with respect to broadening parameter eta
 % eta:  Broadening parameter
 % oms:  Frequencies at which to evaluate the LDOS
+% E_range: Spectral radius of Hamiltonian
 % cheb_wgts: Chebyshev weights <v | T_n(H) | v> for all n < p. To compute
 % multiple LDOS, this should be a matrix with the rows indexing n, and the
 % columns indexing the different local densities of states.
@@ -26,7 +27,7 @@
 % columns index the different local densities of states
 % p:    Number of Chebyshev polynomials needed to achieve self-convergence; if
 % self-convergence is not achieved, p will be set to the largest value tried.
-function [ldos, p] = hodc_ldos_convergep(m, eta, oms, cheb_wgts, tol, pstep)
+function [ldos, p] = hodc_ldos_convergep(m, eta, oms, E_range, cheb_wgts, tol, pstep)
 
   % Get poles and weights for high-order expansion of delta function
   if (m > 6)
@@ -40,12 +41,12 @@ function [ldos, p] = hodc_ldos_convergep(m, eta, oms, cheb_wgts, tol, pstep)
   nus = zeros(nom*m,1);
   for l = 1:m
       for n = 1:nom
-          nus((l-1)*nom+n) = oms(n) + eta*delta_polx(l);
+          nus((l-1)*nom+n) = oms(n) - eta*delta_polx(l);
       end
   end
 
   pmax = size(cheb_wgts, 1);
-  coefs = reshape(lorentz_coeffs(pmax,nus.',eta,-1,1),pmax,nom,m);
+  coefs = reshape(lorentz_coeffs(pmax,nus.',eta,-E_range,E_range),pmax,nom,m);
   for l=1:m
       coefs(:,:,l) = delta_wgt(l)*coefs(:,:,l);
   end
