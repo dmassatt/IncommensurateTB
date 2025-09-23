@@ -1,6 +1,6 @@
 % Chebyshev coefficients for the Lorentzian function
 %
-% f(x) = -1/pi * imag(x - nu + i*eta)^-1
+% f(x) = -1/pi * (x - nu + i*eta)^-1
 %
 % on [a,b]
 function [coefs] = lorentz_coeffs(p, nu, eta, a, b)
@@ -12,12 +12,12 @@ function [coefs] = lorentz_coeffs(p, nu, eta, a, b)
   xc = (a + b)/2 + (b - a)/2*xc; % Chebyshev nodes on [a, b]
 
   % Evaluate the Lorentzian function at the Chebyshev nodes
-  f = -1/pi./(xc - nu + 1i*eta);
+  f = (-1/pi)./(xc - nu + 1i*eta);
 
   % Compute the Chebyshev coefficients
-  coefs = sqrt(2/pp)*dct(f,'Type',2);
+  coefs = dct(f,'Type',2);
   coefs(1,:) = coefs(1,:)/sqrt(2);
 
-  coefs = coefs(1:p,:);
+  coefs = sqrt(2/pp)*coefs(1:p,:);
 
 end

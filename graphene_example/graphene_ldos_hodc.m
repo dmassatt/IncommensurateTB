@@ -19,19 +19,20 @@ E = (-E_range):dE:E_range; % Energy grid
 
 figure(3);
 % Compute local densities of states
+ldos = zeros(length(E),length(etas));
 for i=1:length(etas)
     eta = etas(i);
-    % ldos = hodc_ldos(m, eta, p, E/E_range, cheb_wgts(1:p));
-    ldos = hodc_ldos(m, eta, p, E, E_range, cheb_wgts(1:p));
+    ldos(:,i) = hodc_ldos(m, eta, p, E, E_range, cheb_wgts(1:p));
 
-    plot(E, ldos, '.-'); hold on
-    xlim([-4, 4])
 end
 ldos_true = zeros(length(E),1);
 for i=1:length(E)
     ldos_true(i) = graphene_analytic(E(i),1);
 end
+
+plot(E, ldos, '.-'); hold on
 plot(E,ldos_true,'k--','LineWidth',2); % Analytic result
+xlim([-4, 4])
 hold off
 
 legend(string(num2cell(etas)));
