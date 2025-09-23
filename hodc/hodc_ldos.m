@@ -27,27 +27,7 @@ function ldos = hodc_ldos(m, eta, p, oms, E_range, cheb_wgts)
   [delta_pol,delta_wgt]=rational_kernel(m,'equi');
   delta_polx = real(delta_pol);
 
-  % Get weighted Lorentzian Chebyshev coefficients for all frequencies
-  nom = length(oms);
-
-  nus = zeros(nom*m,1);
-  for l = 1:m
-      for n = 1:nom
-          nus((l-1)*nom+n) = oms(n) - eta*delta_polx(l);
-      end
-  end
-
-  coefs = reshape(lorentz_coeffs(p,nus.',eta,-E_range,E_range),p,nom,m);
-  for l=1:m
-      coefs(:,:,l) = delta_wgt(l)*coefs(:,:,l);
-  end
-
-  % Compute the local densities of states
-  tic;
-  nldos = size(cheb_wgts, 2);
-  ldos = zeros(nom, nldos);
-  for l=1:m
-    ldos = ldos + imag(coefs(:, :, l).' * cheb_wgts);
-  end
+  coefs = kernel_coeffs(p, oms, eta, delta_polx, delta_wgt, -E_range, E_range);
+  ldos = coefs.' * cheb_wgts;
 
 end
