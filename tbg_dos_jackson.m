@@ -32,7 +32,7 @@ fprintf('%d / %d shift-loop\n',i,size(X(:),1))
         disp('Computing LDOS by Jackson KPM...')
         tic;
         Esc = E/(E_range+1);
-        jackson_coeff = Cheb_JacksonCoeff(p-1);
+        jackson_coeff = Cheb_JacksonCoeff(p);
         measure_weight = 1./sqrt(1 - Esc.^2);
         cheb_energy = Cheb_Eval(Esc, p-1);
         d = [.5 ones(1,p-1)];

@@ -10,7 +10,7 @@
 
 function [ldos,cheb_weights] = Cheb_LDoS(H, E_range, v, P, E)
 cheb_weights = Cheb_LDoS_Weights(H, E_range, v, P);
-jackson_coeff = Cheb_JacksonCoeff(P);
+jackson_coeff = Cheb_JacksonCoeff(P+1);
 measure_weight = 1./sqrt(1 - E.^2);
 cheb_energy = Cheb_Eval(E, P);
 

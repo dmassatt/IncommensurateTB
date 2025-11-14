@@ -19,7 +19,7 @@
 function ldos = kpm_ldos(p, oms, E_range, cheb_wgts)
 
   omssc = oms/E_range; % Scale the frequencies to [-1,1]
-  jackson_coeff = Cheb_JacksonCoeff(p-1);
+  jackson_coeff = Cheb_JacksonCoeff(p);
   measure_weight = 1./sqrt(1 - omssc.^2);
   cheb_energy = Cheb_Eval(omssc, p-1);
   d = [.5 ones(1,p-1)];
